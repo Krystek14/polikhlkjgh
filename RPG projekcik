@@ -1,0 +1,126 @@
+using System;
+
+namespace RPG_Game
+{
+    class Program
+    {
+        static void Main(string[] args)
+        {
+            Console.WriteLine("Witaj w grze RPG walki z potworami!");
+            Console.WriteLine("Podaj swoje imię:");
+            string playerName = Console.ReadLine();
+
+            Console.WriteLine("Wybierz swoją klasę:");
+            Console.WriteLine("1. Wojownik");
+            Console.WriteLine("2. Łucznik");
+            Console.WriteLine("3. Mag");
+
+            int playerClass = int.Parse(Console.ReadLine());
+
+            int playerHealth = 0;
+            int playerDamage = 0;
+
+            switch (playerClass)
+            {
+                case 1:
+                    playerHealth = 100;
+                    playerDamage = 20;
+                    Console.WriteLine("{playerName}, jesteś wojownikiem!");
+                    break;
+                case 2:
+                    playerHealth = 80;
+                    playerDamage = 25;
+                    Console.WriteLine("{playerName}, jesteś łucznikiem!");
+                    break;
+                case 3:
+                    playerHealth = 60;
+                    playerDamage = 30;
+                    Console.WriteLine("{playerName}, jesteś magiem!");
+                    break;
+                default:
+                    Console.WriteLine("Nieprawidłowy wybór. Wybierz 1, 2 lub 3.");
+                    break;
+            }
+
+            int[] monsterHealths = { 50, 60, 70, 80, 90 };
+            int[] monsterDamages = { 10, 15, 20, 25, 30 };
+            string[] monsterNames = { "Goblin", "Ork", "Troll", "Smok", "Demon" };
+
+            Console.WriteLine("Twoje zdrowie: {playerHealth}");
+
+            while (playerHealth > 0)
+            {
+                Console.WriteLine("Wybierz potwora do walki:");
+                for (int i = 0; i < monsterNames.Length; i++)
+                {
+                    Console.WriteLine("{i + 1}. {monsterNames[i]} (zdrowie: {monsterHealths[i]})");
+                }
+
+                int monsterIndex = int.Parse(Console.ReadLine()) - 1;
+
+                Console.WriteLine("Rozpoczyna się walka z {monsterNames[monsterIndex]}!");
+
+                int monsterHealth = monsterHealths[monsterIndex];
+                int monsterDamage = monsterDamages[monsterIndex];
+
+                while (playerHealth > 0 && monsterHealth > 0)
+                {
+                    Console.WriteLine("Co chcesz zrobić?");
+                    Console.WriteLine("1. Atakuj potwora");
+                    Console.WriteLine("2. Użyj leczenia");
+
+                    int choice = int.Parse(Console.ReadLine());
+
+                    if (choice == 1)
+                    {
+                        Console.WriteLine("{playerName} atakuje {monsterNames[monsterIndex]} i zadaje {playerDamage} obrażeń.");
+                        monsterHealth -= playerDamage;
+
+                        if (monsterHealth <= 0)
+                        {
+                            Console.WriteLine("{playerName} pokonuje {monsterNames[monsterIndex]}!");
+                            break;
+                        }
+
+                        Console.WriteLine("{monsterNames[monsterIndex]} atakuje {playerName} i zadaje {monsterDamage} obrażeń.");
+                        playerHealth -= monsterDamage;
+                    }
+                    else if (choice == 2)
+                    {
+                        Console.WriteLine("Używasz leczenia.");
+                        playerHealth += 20;
+
+                        if (playerHealth > 100)
+                        {
+                            playerHealth = 100;
+                        }
+                                            
+                                              Console.WriteLine("Twoje zdrowie zostało zregenerowane. Aktualne zdrowie: {playerHealth}");
+											}
+                    else
+                    {
+                        Console.WriteLine("Nieprawidłowy wybór. Wybierz 1 lub 2.");
+                    }
+                }
+
+                if (playerHealth <= 0)
+                {
+                    Console.WriteLine("{playerName}, zostałeś pokonany. Koniec gry!");
+                    break;
+                }
+            }
+
+            Console.WriteLine("Czy chcesz zagrać ponownie? (Tak/Nie)");
+            string playAgain = Console.ReadLine();
+
+            if (playAgain.ToLower() != "tak")
+            {
+                Console.WriteLine("Dziękujemy za grę. Do zobaczenia!");
+                ;
+            }
+        }
+    }
+}
+
+
+
