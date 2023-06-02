@@ -2,59 +2,6 @@ using System;
 
 namespace RPG_Game
 {
-    class Player
-    {
-        public string Name { get; set; }
-        public int Health { get; set; }
-        public int Damage { get; set; }
-
-        public Player(string name, int health, int damage)
-        {
-            Name = name;
-            Health = health;
-            Damage = damage;
-        }
-
-        public void Attack(string monsterName, int monsterHealth)
-        {
-            Console.WriteLine($"{Name} atakuje {monsterName} i zadaje {Damage} obrażeń.");
-            monsterHealth -= Damage;
-        }
-
-        public void Heal()
-        {
-            Console.WriteLine("Używasz leczenia.");
-            Health += 20;
-
-            if (Health > 100)
-            {
-                Health = 100;
-            }
-
-            Console.WriteLine($"Twoje zdrowie zostało zregenerowane. Aktualne zdrowie: {Health}");
-        }
-    }
-
-    class Monster
-    {
-        public string Name { get; set; }
-        public int Health { get; set; }
-        public int Damage { get; set; }
-
-        public Monster(string name, int health, int damage)
-        {
-            Name = name;
-            Health = health;
-            Damage = damage;
-        }
-
-        public void Attack(string playerName, int playerHealth)
-        {
-            Console.WriteLine($"{Name} atakuje {playerName} i zadaje {Damage} obrażeń.");
-            playerHealth -= Damage;
-        }
-    }
-
     class Program
     {
         static void Main(string[] args)
@@ -70,27 +17,53 @@ namespace RPG_Game
 
             int playerClass = int.Parse(Console.ReadLine());
 
-            Player player = CreatePlayer(playerName, playerClass);
+            int playerHealth = 0;
+            int playerDamage = 0;
 
-            Monster[] monsters = CreateMonsters();
+            switch (playerClass)
+            {
+                case 1:
+                    playerHealth = 100;
+                    playerDamage = 20;
+                    Console.WriteLine($"{playerName}, jesteś wojownikiem!");
+                    break;
+                case 2:
+                    playerHealth = 80;
+                    playerDamage = 25;
+                    Console.WriteLine($"{playerName}, jesteś łucznikiem!");
+                    break;
+                case 3:
+                    playerHealth = 60;
+                    playerDamage = 30;
+                    Console.WriteLine($"{playerName}, jesteś magiem!");
+                    break;
+                default:
+                    Console.WriteLine("Nieprawidłowy wybór. Wybierz 1, 2 lub 3.");
+                    return;
+            }
 
-            Console.WriteLine($"Twoje zdrowie: {player.Health}");
+            int[] monsterHealths = { 50, 60, 70, 80, 90 };
+            int[] monsterDamages = { 10, 15, 20, 25, 30 };
+            string[] monsterNames = { "Goblin", "Ork", "Troll", "Smok", "Demon" };
 
-            while (player.Health > 0)
+            Console.WriteLine($"Twoje zdrowie: {playerHealth}");
+
+            while (playerHealth > 0)
             {
                 Console.WriteLine("Wybierz potwora do walki:");
-                for (int i = 0; i < monsters.Length; i++)
+                for (int i = 0; i < monsterNames.Length; i++)
                 {
-                    Console.WriteLine($"{i + 1}. {monsters[i].Name} (zdrowie: {monsters[i].Health})");
+                    Console.WriteLine($"{i + 1}. {monsterNames[i]} (zdrowie: {monsterHealths[i]})");
                 }
 
                 int monsterIndex = int.Parse(Console.ReadLine()) - 1;
 
-                Console.WriteLine($"Rozpoczyna się walka z {monsters[monsterIndex].Name}!");
+                Console.WriteLine($"Rozpoczyna się walka z {monsterNames[monsterIndex]}!");
 
-                Monster currentMonster = monsters[monsterIndex];
+                int monsterHealth = monsterHealths[monsterIndex];
+                int monsterDamage = monsterDamages[monsterIndex];
 
-                while (player.Health > 0 && currentMonster.Health > 0)
+                while (playerHealth > 0 && monsterHealth > 0)
                 {
                     Console.WriteLine("Co chcesz zrobić?");
                     Console.WriteLine("1. Atakuj potwora");
@@ -100,19 +73,29 @@ namespace RPG_Game
 
                     if (choice == 1)
                     {
-                        player.Attack(currentMonster.Name, currentMonster.Health);
+                        Console.WriteLine($"{playerName} atakuje {monsterNames[monsterIndex]} i zadaje {playerDamage} obrażeń.");
+                        monsterHealth -= playerDamage;
 
-                        if (currentMonster.Health <= 0)
+                        if (monsterHealth <= 0)
                         {
-                            Console.WriteLine($"{player.Name} pokonuje {currentMonster.Name}!");
+                            Console.WriteLine($"{playerName} pokonuje {monsterNames[monsterIndex]}!");
                             break;
                         }
 
-                        currentMonster.Attack(player.Name, player.Health);
+                        Console.WriteLine($"{monsterNames[monsterIndex]} atakuje {playerName} i zadaje {monsterDamage} obrażeń.");
+                        playerHealth -= monsterDamage;
                     }
                     else if (choice == 2)
                     {
-                        player.Heal();
+                        Console.WriteLine("Używasz leczenia.");
+                        playerHealth += 20;
+
+                        if (playerHealth > 100)
+                        {
+                            playerHealth = 100;
+                        }
+                                            
+                        Console.WriteLine("Twoje zdrowie zostało zregenerowane. Aktualne zdrowie: " + playerHealth);
                     }
                     else
                     {
@@ -120,9 +103,9 @@ namespace RPG_Game
                     }
                 }
 
-                if (player.Health <= 0)
+                if (playerHealth <= 0)
                 {
-                    Console.WriteLine($"{player.Name}, zostałeś pokonany. Koniec gry!");
+                    Console.WriteLine($"{playerName}, zostałeś pokonany. Koniec gry!");
                     break;
                 }
             }
@@ -134,35 +117,6 @@ namespace RPG_Game
             {
                 Console.WriteLine("Dziękujemy za grę. Do zobaczenia!");
             }
-        }
-
-        static Player CreatePlayer(string name, int playerClass)
-        {
-            switch (playerClass)
-            {
-                case 1:
-                    return new Player(name, 100, 20);
-                case 2:
-                    return new Player(name, 80, 25);
-                case 3:
-                    return new Player(name, 60, 30);
-                default:
-                    Console.WriteLine("Nieprawidłowy wybór. Tworzony jest domyślny gracz.");
-                    return new Player(name, 100, 20);
-            }
-        }
-
-        static Monster[] CreateMonsters()
-        {
-            Monster[] monsters = new Monster[5];
-
-            monsters[0] = new Monster("Goblin", 50, 10);
-            monsters[1] = new Monster("Ork", 60, 15);
-            monsters[2] = new Monster("Troll", 70, 20);
-            monsters[3] = new Monster("Smok", 80, 25);
-            monsters[4] = new Monster("Demon", 90, 30);
-
-            return monsters;
         }
     }
 }
